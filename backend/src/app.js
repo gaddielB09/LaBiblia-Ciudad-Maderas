@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import SectionsRouter from "./Routes/sections.js";
 import SearchRouter from "./Routes/search.js";
 import ChatRouter from "./Routes/chat.js";
+import RequestsRouter from "./Routes/requests.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/sections", SectionsRouter);
 app.use("/api/search", SearchRouter);
 app.use("/api/chat", ChatRouter);
+app.use("/api/requests", RequestsRouter);
 
 app.get("/health", (_, res) => res.json({ status: "ok" }));
 

@@ -1,6 +1,32 @@
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { sendChat } from "../../services/api";
 import "../../css/Home/Home.css";
 
 export default function Home({ theme, toggleTheme }) {
+  const [query, setQuery] = useState("");
+  const [aiResponse, setAiResponse] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSearch = async (e) => {
+    if (e.key === "Enter" && query.trim() !== "") {
+      setIsLoading(true);
+      setAiResponse(null);
+
+      try {
+        const res = await sendChat(query);
+        setAiResponse(res.data.reply);
+      } catch (error) {
+        console.error("Error consultando a Gemini:", error);
+        setAiResponse(
+          "Hubo un error al intentar comunicar con la IA. Por favor, intenta de nuevo.",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="home">
       <header className="home__top-bar">
@@ -61,8 +87,26 @@ export default function Home({ theme, toggleTheme }) {
             className="home__search-input"
             type="text"
             placeholder="Ej. ¿Donde se encuentran las oficinas?"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleSearch}
+            disabled={isLoading}
           />
         </div>
+        {(isLoading || aiResponse) && (
+          <div className="home__ai-container">
+            {isLoading ? (
+              <div className="home__ai-loading">
+                <span className="spinner"></span>
+                <p>Consultando a La Biblia...</p>
+              </div>
+            ) : (
+              <div className="home__ai-reply">
+                <ReactMarkdown>{aiResponse}</ReactMarkdown>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <footer className="home__footer">

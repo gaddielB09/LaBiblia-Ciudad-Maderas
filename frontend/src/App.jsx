@@ -55,7 +55,7 @@ export default function App() {
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
           </button>
-          <h1 className="mobile-header__title">Mi Empresa</h1>
+          <h1 className="mobile-header__title">Ciudad Maderas</h1>
         </header>
 
         <Sidebar
@@ -71,7 +71,7 @@ export default function App() {
               path="/"
               element={<Home theme={theme} toggleTheme={toggleTheme} />}
             />
-            <Route path="/solicitudes" element={<Solicitudes />} />
+            <Route path="/solicitudes" element={<Solicitudes theme={theme} toggleTheme={toggleTheme} />} />
             <Route
               path="/s/:slug"
               element={<Section theme={theme} toggleTheme={toggleTheme} />}
