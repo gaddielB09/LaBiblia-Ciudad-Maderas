@@ -1,16 +1,54 @@
-# React + Vite
+# La Biblia Ciudad Maderas - Frontend 🌿
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es el cliente web de la plataforma "La Biblia", una herramienta interna diseñada para gestionar secciones, realizar búsquedas inteligentes y enviar solicitudes de soporte o ideas.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologías Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React.js**: Biblioteca principal para la interfaz.
+- **Vite**: Herramienta de construcción (build tool) ultra rápida.
+- **Axios**: Cliente HTTP para comunicación con el Backend.
+- **CSS3**: Estilos personalizados con variables para soporte de Modo Oscuro.
+- **Lucide React / SVGs**: Para la iconografía del sistema.
 
-## React Compiler
+## 📁 Estructura de Carpetas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+frontend/
+├── src/
+│   ├── components/       # Componentes reutilizables de la UI
+│   ├── Pages/            # Pantallas principales (Home, Solicitudes, etc.)
+│   ├── services/         # Configuración de Axios y llamadas a la API
+│   ├── css/              # Hojas de estilo organizadas por módulos
+│   ├── App.jsx           # Componente raíz y manejo de rutas
+│   └── main.jsx          # Punto de entrada de React
+├── .env                  # Variables de entorno (no subir a Git)
+└── package.json          # Dependencias y scripts
 
-## Expanding the ESLint configuration
+## ⚙️ Configuración
+1. Variables de Entorno
+Crea un archivo .env en la raíz de esta carpeta y configura la URL de tu backend:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+VITE_API_URL=http://localhost:4000/api
+
+2. Instalación
+Instala todas las dependencias necesarias:
+
+npm install
+
+3. Ejecución en Desarrollo
+Para levantar el proyecto localmente con recarga en vivo:
+
+npm run dev
+
+## 🎨 Características Especiales
+Theme Toggle: Sistema de cambio entre Modo Claro y Modo Oscuro integrado mediante variables CSS (--bg, --text, --border).
+
+Animaciones Fluidas: Uso de transiciones y keyframes para la expansión de tarjetas y cambios de estado.
+
+Responsive Design: Adaptado para ser consultado desde diferentes dispositivos.
+
+## 🛠️ Scripts Disponibles
+npm run dev: Inicia el servidor de desarrollo.
+
+npm run build: Genera la versión optimizada para producción en la carpeta dist/.
+
+npm run preview: Permite previsualizar localmente la versión de producción.
