@@ -52,6 +52,7 @@ const NAV = [
 ];
 
 const BOTTOM = [
+  { icon: "🎨", label: "Studio", slug: "s/studio" },
   { icon: "🔥", label: "Novedades", slug: "s/novedades" },
   { icon: "📋", label: "Solicitudes e ideas", slug: "solicitudes" },
   { icon: "👤", label: "Nombre de usuario", slug: "s/usuario" },
@@ -230,6 +231,11 @@ export default function Sidebar({ open, onToggle }) {
         </nav>
 
         <div className="sidebar__bottom">
+          <Link
+            to="/studio"
+            className="sidebar__icon-btn sidebar__icon-btn--accent"
+            title="Page Builder"
+          >Ciudad Maderas Studio</Link>
           {BOTTOM.map((item) => (
             <Link
               key={item.label}

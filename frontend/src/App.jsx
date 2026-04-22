@@ -6,6 +6,7 @@ import Home from "./pages/Home/Home";
 import Solicitudes from "./pages/Requests/Requests";
 import Section from "./pages/Section/Section";
 import "./App.css";
+import PageBuilder from "./Components/PageBuilder/PageBuilder";
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
@@ -32,8 +33,6 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="app-layout">
-        <InfoModal />
-
         <header className="mobile-header">
           <button
             className="mobile-header__toggle"
@@ -71,11 +70,15 @@ export default function App() {
               path="/"
               element={<Home theme={theme} toggleTheme={toggleTheme} />}
             />
-            <Route path="/solicitudes" element={<Solicitudes theme={theme} toggleTheme={toggleTheme} />} />
+            <Route
+              path="/solicitudes"
+              element={<Solicitudes theme={theme} toggleTheme={toggleTheme} />}
+            />
             <Route
               path="/s/:slug"
               element={<Section theme={theme} toggleTheme={toggleTheme} />}
             />
+            <Route path="/studio" element={<PageBuilder />} />
           </Routes>
         </main>
       </div>
