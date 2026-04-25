@@ -1,9 +1,8 @@
 import { Router } from "express";
-import Section from "../Models/section.js";
+import Section from "../Models/sectionContent.js";
 
 const SearchRouter = Router();
 
-// GET /api/search?q=ventas
 SearchRouter.get("/", async (req, res) => {
   const { q } = req.query;
   if (!q) return res.json([]);

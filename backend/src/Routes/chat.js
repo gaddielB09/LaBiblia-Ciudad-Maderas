@@ -1,60 +1,97 @@
 import { Router } from "express";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import Section from "../Models/section.js";
+import OpenAI from "openai";
+import SectionContent from "../Models/sectionContent.js";
+import { generateEmbedding, cosineSimilarity } from "./Ingest.js";
 
 const ChatRouter = Router();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const AGENTS = {
+  valeria: {
+    name: "Valeria",
+    systemPrompt: `Eres Valeria, una asistente estratégica y comercial interna diseñada para apoyar a la fuerza de ventas de Ciudad Maderas. NO interactúas con clientes finales. Tu usuario siempre es un asesor comercial. No eres una vendedora directa, no cierras ventas, no presionas y NO usas emojis. Eres un hub de información interna, un copiloto cognitivo y un acelerador de criterio.
+
+    REGLAS ESTRICTAS DE RESPUESTA:
+    1. PRIORIDAD (MODO RÁPIDO): Si la pregunta es clara, responde en la primera línea. Sin introducciones, sin rodeos. Máximo 1-2 líneas adicionales si aportan valor. Acceso claro > explicación extensa.
+    2. MANEJO DE INCERTIDUMBRE Y ESCALAMIENTO: Si la pregunta es ambigua, falta contexto, algo varía por zona/modelo, o hay riesgo de error, NO inventes. Responde exactamente con: "Esta información puede variar. Para confirmarla con precisión, conviene revisarlo con tu jefe directo." o "Este punto conviene revisarlo con tu jefe directo para evitar errores."
+    3. CUESTIONAMIENTO AL ASESOR: Si detectas que el asesor está asumiendo cosas no validadas o cometiendo errores de lógica, señálalo educadamente (Ej: "Aquí hay un punto débil: estás asumiendo algo que no está validado"). Corrige el pensamiento, no a la persona.
+    4. TONO: Claro, Profesional, Directo, Tranquilo, Inteligente.
+    5. FORMATO: Utiliza Markdown obligatoriamente. Si debes mostrar múltiples datos, comparativas, precios o dimensiones, DEBES usar el formato de tablas de Markdown (con | y -).
+
+    Toda la información proviene ÚNICAMENTE de la siguiente base de datos interna. Nunca inventes información.`,
+  },
+  pacolli: {
+    name: "Pacolli",
+    systemPrompt: `Eres Pacolli. [Personalidad de Pacolli por definir].`,
+  },
+};
 
 ChatRouter.post("/", async (req, res) => {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const { message, agent = "valeria", history = [] } = req.body;
 
-  const { message } = req.body;
-
-  if (!message) {
+  if (!message)
     return res.status(400).json({ error: "El mensaje es requerido" });
-  }
 
   try {
-    const searchResults = await Section.find(
-      { $text: { $search: message } },
-      { score: { $meta: "textScore" }, title: 1, content: 1 },
-    )
-      .sort({ score: { $meta: "textScore" } })
-      .limit(3);
+    const recentContext = history
+      .slice(-2)
+      .map((m) => m.content)
+      .join(" ");
+    const searchQuery = recentContext ? `${recentContext} ${message}` : message;
+
+    const queryEmbedding = await generateEmbedding(message);
+
+    const allSections = await SectionContent.find(
+      { embedding: { $exists: true, $ne: [] } },
+      {
+        title: 1,
+        content: 1,
+        parentSectionName: 1,
+        imageUrls: 1,
+        embedding: 1,
+      },
+    );
+
+    const scored = allSections
+      .map((doc) => ({
+        doc,
+        score: cosineSimilarity(queryEmbedding, doc.embedding),
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
 
     let contextText =
       "No se encontró información relevante en la base de datos para esta consulta.";
+    let contextImages = [];
 
-    if (searchResults.length > 0) {
-      contextText = searchResults
-        .map((doc) => `--- SECCIÓN: ${doc.title} ---\n${doc.content}`)
+    if (scored.length > 0 && scored[0].score > 0.3) {
+      contextText = scored
+        .map(
+          ({ doc }) =>
+            `--- SECCIÓN: ${doc.parentSectionName} > ${doc.title} ---\n${doc.content}`,
+        )
         .join("\n\n");
+
+      contextImages = scored.flatMap(({ doc }) => doc.imageUrls || []);
     }
 
-    //! This model is a preview, so it needs to be changed to a stable one when it is released. For now, it is the best option for this use case
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview",
+    const currentAgent = AGENTS[agent] || AGENTS["valeria"];
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.2,
+      messages: [
+        {
+          role: "system",
+          content: `${currentAgent.systemPrompt}\n\nINFORMACIÓN DE LA BASE DE DATOS (Actualizada para el contexto actual):\n${contextText}`,
+        },
+        ...history,
+        { role: "user", content: message },
+      ],
     });
 
-    const prompt = `
-      Eres el asistente virtual experto de la empresa "La Biblia". 
-      Tu trabajo es responder las dudas de los usuarios basándote ÚNICAMENTE en la información proporcionada a continuación.
-      
-      REGLAS ESTRICTAS:
-      1. Si la respuesta a la pregunta del usuario no está explícitamente en la "INFORMACIÓN DE LA BASE DE DATOS", no inventes nada. Responde amablemente que esa información no está disponible en este momento.
-      2. Sé claro, profesional y conciso.
-      3. Puedes usar formato Markdown (negritas, listas) para estructurar tu respuesta de forma amigable.
-
-      INFORMACIÓN DE LA BASE DE DATOS:
-      ${contextText}
-
-      PREGUNTA DEL USUARIO:
-      ${message}
-    `;
-
-    const result = await model.generateContent(prompt);
-    const reply = result.response.text();
-
-    res.json({ reply });
+    const reply = response.choices[0].message.content;
+    res.json({ reply, images: contextImages });
   } catch (error) {
     console.error("Error en ChatRouter:", error);
     res

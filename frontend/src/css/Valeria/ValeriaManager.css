@@ -1,0 +1,246 @@
+.vmanager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2rem;
+  background: var(--main-bg);
+}
+
+.vmanager__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.vmanager__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.vmanager__back:hover {
+  background: var(--border);
+}
+
+.vmanager__title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+  flex: 1;
+}
+
+.vmanager__delete-parent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #e63b2e;
+  border: 1px solid #e63b2e;
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vmanager__delete-parent:hover {
+  background: rgba(230, 59, 46, 0.08);
+}
+
+.vmanager__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.vmanager__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+}
+
+.vmanager__item:hover {
+  border-color: var(--text-muted);
+  background: var(--main-bg);
+}
+
+.vmanager__item--page {
+  cursor: default;
+}
+.vmanager__item--page:hover {
+  border-color: var(--border);
+  background: var(--bg);
+}
+
+.vmanager__page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.vmanager__page-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--main-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.vmanager__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.vmanager__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vmanager__btn--edit {
+  color: var(--text-muted);
+}
+.vmanager__btn--edit:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+.vmanager__btn--delete {
+  color: #e63b2e;
+}
+.vmanager__btn--delete:hover {
+  background: rgba(230, 59, 46, 0.08);
+  border-color: #e63b2e;
+}
+
+.vmanager__loading {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.vmanager__editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.vmanager__images {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vmanager__image {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  object-fit: contain;
+}
+
+.vmanager__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.vmanager__confirm {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.vmanager__confirm h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  margin: 0 0 10px;
+  color: var(--text);
+}
+
+.vmanager__confirm p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+.vmanager__confirm-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.vmanager__confirm-cancel {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.vmanager__confirm-cancel:hover {
+  background: var(--border);
+}
+
+.vmanager__confirm-delete {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #e63b2e;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.vmanager__confirm-delete:hover {
+  background: #c9342a;
+}

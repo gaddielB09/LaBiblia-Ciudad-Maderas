@@ -1,12 +1,43 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import InfoModal from "./Components/Modals/InfoModal";
-import Home from "./pages/Home/Home";
+import Valeria from "./pages/Valeria/Valeria";
 import Solicitudes from "./pages/Requests/Requests";
 import Section from "./pages/Section/Section";
 import "./App.css";
 import PageBuilder from "./Components/PageBuilder/PageBuilder";
+import Home from "./pages/Home/Home";
+import ValeriaConfig from "./pages/Valeria/ValeriaConfig";
+
+function AnimatedRoutes({ theme, toggleTheme }) {
+  const location = useLocation();
+
+  return (
+    <main key={location.pathname} className="main-content page-transition">
+      <Routes location={location}>
+        <Route path="/" element={<Home />} theme={theme} toggleTheme={toggleTheme} />
+        <Route
+          path="/valeria"
+          element={<Valeria theme={theme} toggleTheme={toggleTheme} />}
+        />
+        <Route
+          path="/valeria-config"
+          element={<ValeriaConfig theme={theme} toggleTheme={toggleTheme} />}
+        />
+        <Route
+          path="/solicitudes"
+          element={<Solicitudes theme={theme} toggleTheme={toggleTheme} />}
+        />
+        <Route
+          path="/s/:slug"
+          element={<Section theme={theme} toggleTheme={toggleTheme} />}
+        />
+        <Route path="/studio" element={<PageBuilder />} />
+      </Routes>
+    </main>
+  );
+}
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
@@ -54,7 +85,6 @@ export default function App() {
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
           </button>
-          <h1 className="mobile-header__title">Ciudad Maderas</h1>
         </header>
 
         <Sidebar
@@ -64,23 +94,7 @@ export default function App() {
           toggleTheme={toggleTheme}
         />
 
-        <main className="main-content">
-          <Routes>
-            <Route
-              path="/"
-              element={<Home theme={theme} toggleTheme={toggleTheme} />}
-            />
-            <Route
-              path="/solicitudes"
-              element={<Solicitudes theme={theme} toggleTheme={toggleTheme} />}
-            />
-            <Route
-              path="/s/:slug"
-              element={<Section theme={theme} toggleTheme={toggleTheme} />}
-            />
-            <Route path="/studio" element={<PageBuilder />} />
-          </Routes>
-        </main>
+        <AnimatedRoutes theme={theme} toggleTheme={toggleTheme} />
       </div>
     </BrowserRouter>
   );
