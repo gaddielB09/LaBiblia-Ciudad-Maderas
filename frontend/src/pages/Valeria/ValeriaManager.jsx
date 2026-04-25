@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, ChevronRight, Trash2, Edit3, X, Save, Plus } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronRight,
+  Trash2,
+  Edit3,
+  Save,
+  Plus,
+} from "lucide-react";
 import { getSections } from "../../services/api";
+import { ToastContainer, useToast } from "../../Components/Toast/Toast";
 import axios from "axios";
 import "../../css/Valeria/ValeriaManager.css";
 
@@ -14,6 +22,7 @@ export default function ValeriaManager({ onBack }) {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [editingPage, setEditingPage] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const { toasts, addToast, removeToast } = useToast();
 
   useEffect(() => {
     getSections().then((res) => setParents(res.data));
@@ -31,6 +40,7 @@ export default function ValeriaManager({ onBack }) {
     await api.delete(`/sections/page/${pageId}`);
     setPages((prev) => prev.filter((p) => p._id !== pageId));
     setConfirmDelete(null);
+    addToast("Página eliminada.", "success");
   };
 
   const handleDeleteParent = async (parentId) => {
@@ -38,29 +48,28 @@ export default function ValeriaManager({ onBack }) {
     setParents((prev) => prev.filter((p) => p.id !== parentId));
     setSelectedParent(null);
     setConfirmDelete(null);
+    addToast("Sección eliminada.", "success");
   };
 
   const handleSavePage = async () => {
     setIsSaving(true);
-    
     try {
       let finalImageUrls = [...(editingPage.imageUrls || [])];
 
       if (editingPage.imageFiles && editingPage.imageFiles.length > 0) {
         const formData = new FormData();
-        editingPage.imageFiles.forEach((file) => formData.append("images", file));
+        editingPage.imageFiles.forEach((file) =>
+          formData.append("images", file),
+        );
 
         const uploadRes = await fetch(
           "http://localhost:4000/api/ingest/upload-images",
-          {
-            method: "POST",
-            body: formData,
-          }
+          { method: "POST", body: formData },
         );
 
-        if (!uploadRes.ok) throw new Error("Error subiendo las nuevas imágenes");
+        if (!uploadRes.ok)
+          throw new Error("Error subiendo las nuevas imágenes");
         const uploadData = await uploadRes.json();
-
         finalImageUrls = [...finalImageUrls, ...uploadData.urls];
       }
 
@@ -74,15 +83,15 @@ export default function ValeriaManager({ onBack }) {
       delete updatedPage.imageFiles;
 
       setPages((prev) =>
-        prev.map((p) => (p._id === editingPage._id ? updatedPage : p))
+        prev.map((p) => (p._id === editingPage._id ? updatedPage : p)),
       );
-      
       setIsSaving(false);
       setEditingPage(null);
+      addToast("Cambios guardados correctamente.", "success");
     } catch (error) {
       console.error("Error al guardar:", error);
       setIsSaving(false);
-      alert("Hubo un error al guardar los cambios.");
+      addToast("Hubo un error al guardar los cambios.", "error");
     }
   };
 
@@ -100,6 +109,7 @@ export default function ValeriaManager({ onBack }) {
             Editando — Página {editingPage.pageNum}
           </h1>
         </header>
+
         <div className="vmanager__editor">
           <div className="review-box__group">
             <label className="review-box__label">Título</label>
@@ -125,7 +135,6 @@ export default function ValeriaManager({ onBack }) {
 
           <div className="review-box__group" style={{ marginTop: "15px" }}>
             <label className="review-box__label">Imágenes de la Página</label>
-            
             <div
               style={{
                 display: "flex",
@@ -138,15 +147,18 @@ export default function ValeriaManager({ onBack }) {
                 const imageUrl = url.startsWith("http")
                   ? url
                   : `http://localhost:4000${url}`;
-
                 return (
                   <div
                     key={`url-${i}`}
-                    style={{ position: "relative", width: "100px", height: "100px" }}
+                    style={{
+                      position: "relative",
+                      width: "100px",
+                      height: "100px",
+                    }}
                   >
                     <img
                       src={imageUrl}
-                      alt={`img-guardada-${i}`}
+                      alt={`img-${i}`}
                       style={{
                         width: "100%",
                         height: "100%",
@@ -160,12 +172,27 @@ export default function ValeriaManager({ onBack }) {
                       onClick={() => {
                         const updatedUrls = [...editingPage.imageUrls];
                         updatedUrls.splice(i, 1);
-                        setEditingPage({ ...editingPage, imageUrls: updatedUrls });
+                        setEditingPage({
+                          ...editingPage,
+                          imageUrls: updatedUrls,
+                        });
                       }}
                       style={{
-                        position: "absolute", top: "-6px", right: "-6px", background: "#e63b2e", color: "white", border: "none", borderRadius: "50%", width: "22px", height: "22px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px",
+                        position: "absolute",
+                        top: "-6px",
+                        right: "-6px",
+                        background: "#e63b2e",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "22px",
+                        height: "22px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "14px",
                       }}
-                      title="Eliminar imagen guardada"
                     >
                       ×
                     </button>
@@ -176,11 +203,15 @@ export default function ValeriaManager({ onBack }) {
               {(editingPage.imageFiles || []).map((file, i) => (
                 <div
                   key={`file-${i}`}
-                  style={{ position: "relative", width: "100px", height: "100px" }}
+                  style={{
+                    position: "relative",
+                    width: "100px",
+                    height: "100px",
+                  }}
                 >
                   <img
                     src={URL.createObjectURL(file)}
-                    alt={`img-nueva-${i}`}
+                    alt={`img-new-${i}`}
                     style={{
                       width: "100%",
                       height: "100%",
@@ -194,12 +225,27 @@ export default function ValeriaManager({ onBack }) {
                     onClick={() => {
                       const updatedFiles = [...editingPage.imageFiles];
                       updatedFiles.splice(i, 1);
-                      setEditingPage({ ...editingPage, imageFiles: updatedFiles });
+                      setEditingPage({
+                        ...editingPage,
+                        imageFiles: updatedFiles,
+                      });
                     }}
                     style={{
-                      position: "absolute", top: "-6px", right: "-6px", background: "#e63b2e", color: "white", border: "none", borderRadius: "50%", width: "22px", height: "22px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px",
+                      position: "absolute",
+                      top: "-6px",
+                      right: "-6px",
+                      background: "#e63b2e",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "22px",
+                      height: "22px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "14px",
                     }}
-                    title="Eliminar imagen nueva"
                   >
                     ×
                   </button>
@@ -232,12 +278,14 @@ export default function ValeriaManager({ onBack }) {
                 justifyContent: "center",
                 marginBottom: "20px",
                 display: "flex",
-                alignItems: "center"
+                alignItems: "center",
               }}
-              onClick={() => document.getElementById("upload-img-manager").click()}
+              onClick={() =>
+                document.getElementById("upload-img-manager").click()
+              }
             >
-              <Plus size={16} style={{ marginRight: "5px" }} />{" "}
-              Agregar Nuevas Imágenes
+              <Plus size={16} style={{ marginRight: "5px" }} /> Agregar Nuevas
+              Imágenes
             </button>
           </div>
 
@@ -257,6 +305,8 @@ export default function ValeriaManager({ onBack }) {
             )}
           </button>
         </div>
+
+        <ToastContainer toasts={toasts} onClose={removeToast} />
       </div>
     );
   }
@@ -361,6 +411,8 @@ export default function ValeriaManager({ onBack }) {
           </div>
         </div>
       )}
+
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
   );
 }

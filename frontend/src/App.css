@@ -39,10 +39,9 @@ body,
   font-family: "DM Sans", sans-serif;
   background: var(--bg);
   color: var(--text);
-  overflow: hidden; /* Previene doble scrollbar */
+  overflow: hidden;
 }
 
-/* Base Layout */
 .app-layout {
   display: flex;
   height: 100vh;
@@ -64,7 +63,6 @@ body,
   display: none;
 }
 
-/* Mobile Adjustments */
 @media (max-width: 768px) {
   .app-layout {
     flex-direction: column;
@@ -112,7 +110,6 @@ body,
 .page-transition {
   animation: pageReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: transform, opacity, filter;
-  /* Asegura que ocupe todo el espacio disponible */
   height: 100%;
   width: 100%;
 }

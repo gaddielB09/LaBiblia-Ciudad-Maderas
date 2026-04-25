@@ -228,13 +228,12 @@ export default function usePageBuilder() {
   const handlePointerDown = (e, element, type = "drag", handle = null) => {
     if (viewMode === "preview") return;
 
-    // Si estamos editando el interior de una tabla y ya estaba seleccionada, dejamos propagar para el foco
     if (
       element.type === "table" &&
       selectedElementId === element.id &&
       type === "drag"
     ) {
-      // No frenamos la propagación aquí, para que el textarea pueda ser clickeado
+      //
     } else {
       e.stopPropagation();
     }
@@ -270,7 +269,6 @@ export default function usePageBuilder() {
   const handlePointerMove = (e) => {
     if (interaction.type === "none" || !interaction.elementId) return;
 
-    // No prevenir default si se está interactuando con un textarea interno de tabla
     if (e.target.tagName !== "TEXTAREA") {
       e.preventDefault();
     }

@@ -174,6 +174,7 @@
 .message__body {
   flex: 1;
   padding-top: 4px;
+  min-width: 0;
 }
 
 .message__preparing {
@@ -188,6 +189,7 @@
   line-height: 1.7;
   color: var(--text);
   position: relative;
+  word-break: break-word;
 }
 
 .message__text p {
@@ -260,6 +262,7 @@
   color: var(--text);
   font-family: "DM Sans", sans-serif;
   background: transparent;
+  min-width: 0;
 }
 
 .valeria__search-input::placeholder {
@@ -316,6 +319,9 @@
   background: var(--main-bg);
   border-radius: 8px;
   overflow: hidden;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .message__text th {
@@ -324,6 +330,7 @@
   font-weight: 600;
   text-align: left;
   padding: 10px 12px;
+  white-space: nowrap;
 }
 
 .message__text td {
@@ -526,6 +533,7 @@
     border-color 0.2s,
     box-shadow 0.2s;
   outline: none;
+  box-sizing: border-box;
 }
 
 .review-box__input:focus,
@@ -822,14 +830,47 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 1280px) {
   .valeria__messages {
-    padding: 12px 16px;
+    padding: 24px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    align-self: center;
   }
 
   .valeria__input-area {
-    padding: 12px 16px 16px;
+    padding: 20px 48px 28px;
   }
+
+  .valeria__search-wrap {
+    width: min(720px, 70vw);
+  }
+
+  .message {
+    max-width: 860px;
+  }
+
+  .upload-box {
+    padding: 4rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1279px) {
+  .valeria__messages {
+    padding: 16px 32px;
+  }
+
+  .valeria__input-area {
+    padding: 16px 32px 24px;
+  }
+
+  .valeria__search-wrap {
+    width: min(640px, 85vw);
+  }
+}
+
+@media (max-width: 768px) {
   .valeria__top-bar {
     padding: 16px;
   }
@@ -844,5 +885,87 @@
 
   .valeria--chat .valeria__title-main {
     font-size: 20px;
+  }
+
+  .valeria__messages {
+    padding: 12px 16px;
+    gap: 16px;
+  }
+
+  .valeria__input-area {
+    padding: 12px 16px 16px;
+  }
+
+  .valeria__search-wrap {
+    width: 100%;
+  }
+
+  .valeria__search-input {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .message--user p {
+    max-width: 88%;
+    font-size: 14px;
+  }
+
+  .message--ai {
+    gap: 8px;
+  }
+
+  .message__avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .agent-btn {
+    font-size: 12px;
+    padding: 8px 8px;
+  }
+
+  .upload-box {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .upload-box__header h2 {
+    font-size: 1.5rem;
+  }
+
+  .upload-box__dropzone {
+    padding: 2rem 1rem;
+  }
+
+  .valeria__upload-view {
+    padding: 1rem;
+  }
+
+  .review-box__section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .valeria--chat .valeria__title-main {
+    font-size: 18px;
+  }
+
+  .valeria__action-btn span {
+    display: none;
+  }
+
+  .agent-btn {
+    padding: 6px;
+  }
+
+  .agent-btn span:not([data-icon]) {
+    display: none;
+  }
+
+  .upload-box {
+    padding: 1.25rem;
   }
 }

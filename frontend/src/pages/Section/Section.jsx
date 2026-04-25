@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { getSection } from "../../services/api";
-// Importamos iconos elegantes para el loading y el error
 import { Loader2, FileQuestion, ArrowLeft } from "lucide-react";
 import "../../css/Section/Section.css";
 

@@ -129,7 +129,6 @@ export default function PageBuilder() {
         />
       );
     }
-    // --- FORMA ---
     else if (el.type === "shape") {
       if (el.shapeType === "triangle") {
         content = (
